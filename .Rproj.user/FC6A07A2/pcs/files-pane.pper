@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/GitHub/groceries",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

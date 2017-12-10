@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n##Load packages and set directory\nsetwd(\"~/Documents/GitHub/groceries\")\nlibrary(arules)\n??read.transactions\nlibrary(readr)\n\n#Loading data and treating data\n\norders <- data.frame(orderID=order_prod$order_id, prod_name=order_prod$product_name)\nwrite.csv(orders, \"./orders.csv\")\norders <- read_csv(\"~/Documents/GitHub/groceries/orders.csv\")\nView(orders)\nbaskets<- read.transactions(file=\"~/Documents/GitHub/groceries/orders.csv\",\n                            format = \"single\",\n                            sep = \";\",\n                            quote = \"\",\n                            cols= c(1,2))\ninspect(baskets)\nsummary(baskets)\n\nitemFrequency(baskets)\ntest1<-eclat(baskets, parameter = list(supp=0.05, maxlen=15))\ninspect(test1)\n\n#Produtos mais comprados\nitemFrequencyPlot(baskets, top=12, type=\"absolute\", main=\"Best Sellers Brio\", col=\"#0296A5\")\n\n\n#Rule0:supp:0.005, conf:0.5, maxlen=5\nrule0 <- apriori(baskets, parameter=list(supp=0.002, conf=0.45, maxlen=4))\n\n#Rule 1: supp:0.009, conf:0.5, maxlen=2\nrule1 <- apriori(baskets, parameter=list(supp=0.009, conf=0.5, maxlen=4))\ninspect(rule1)\n\n#Rule 2: supp:0.01, conf:0.30, maxlen=4\nrule2 <- apriori(baskets, parameter=list(supp=0.009, conf=0.51, maxlen=5))\ninspect(rule2)\n\n#Sort rules by conf\nrules_conf <- sort (rule0, by=\"confidence\", decreasing=TRUE)\ninspect(rules_conf)\n\n#by lift\nrules_lift <- sort(rule0, by=\"lift\", decreasing=TRUE)\ninspect(rules_lift)\n#Fazer isto: arules::supportingTransactions(transactions = baskets )\n\n#Lift for Organic milk\nmilk <- apriori (data=baskets, parameter=list (supp=0.001,conf = 0.12), \n                 appearance = list (default=\"lhs\",rhs=\"Organic Whole Milk\"), control = list (verbose=F))\ninspect(milk)\nrules_lift_milk <- sort(milk, by=\"lift\", decreasing=TRUE)\ninspect(rules_lift_milk)\n\n#Lift for Bread\nbread <- apriori (data=baskets, parameter=list (supp=0.001,conf = 0.03), \n                 appearance = list (default=\"lhs\",rhs=\"100% Whole Wheat Bread\"), control = list (verbose=F))\ninspect(bread)\nrules_lift_bread <- sort(bread, by=\"lift\", decreasing=TRUE)\ninspect(rules_lift_bread)\n\n\n",
+    "created" : 1512750163747.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3809137561",
+    "id" : "B2FC321D",
+    "lastKnownWriteTime" : 1512795046,
+    "last_content_update" : 1512795046861,
+    "path" : "~/Documents/GitHub/groceries/groceries.R",
+    "project_path" : "groceries.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
