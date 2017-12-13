@@ -5,10 +5,11 @@ library(arules)
 ??read.transactions
 library(readr)
 
+
 #Loading data and treating data
 
-orders <- data.frame(orderID=order_prod$order_id, prod_name=order_prod$product_name)
-write.csv(orders, "./orders.csv")
+#orders <- data.frame(orderID=order_prod$order_id, prod_name=order_prod$product_name)
+#write.csv(orders, "./orders.csv")
 orders <- read_csv("~/Documents/GitHub/groceries/orders.csv")
 View(orders)
 baskets<- read.transactions(file="~/Documents/GitHub/groceries/orders.csv",
@@ -16,7 +17,9 @@ baskets<- read.transactions(file="~/Documents/GitHub/groceries/orders.csv",
                             sep = ";",
                             quote = "",
                             cols= c(1,2))
-inspect(baskets)
+
+
+inspect(head(baskets))
 summary(baskets)
 
 itemFrequency(baskets)
@@ -24,7 +27,12 @@ test1<-eclat(baskets, parameter = list(supp=0.05, maxlen=15))
 inspect(test1)
 
 #Produtos mais comprados
-itemFrequencyPlot(baskets, top=12, type="absolute", main="Best Sellers Brio", col="#0296A5")
+itemFrequencyPlot(baskets, 
+                  top="10", 
+                  type="absolute", 
+                  main="Best Sellers Brio", 
+                  col="#0296A5")
+
 
 
 #Rule0:supp:0.005, conf:0.5, maxlen=5
@@ -61,4 +69,8 @@ inspect(bread)
 rules_lift_bread <- sort(bread, by="lift", decreasing=TRUE)
 inspect(rules_lift_bread)
 
+
+rules <- apriori(baskets,parameter = list(supp = 0.0018, conf = 0.40))
+rules
+plot(rules[1:10], method=graph, control=list(type=items()))
 
