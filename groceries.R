@@ -4,7 +4,10 @@ setwd("~/Documents/GitHub/groceries")
 library(arules)
 ??read.transactions
 library(readr)
-
+library(arulesViz)
+library(rJava)
+library(iplots)
+library(colorspace)
 
 #Loading data and treating data
 
@@ -34,17 +37,41 @@ itemFrequencyPlot(baskets,
                   col="#0296A5")
 
 
+  #1 itemset
+#Rule0:supp:0.00199, conf:0.47, maxlen=3
+rule0 <- apriori(baskets, parameter=list(supp=0.00199, conf=0.47, maxlen=3))
+rule0
 
-#Rule0:supp:0.005, conf:0.5, maxlen=5
-rule0 <- apriori(baskets, parameter=list(supp=0.002, conf=0.45, maxlen=4))
-
-#Rule 1: supp:0.009, conf:0.5, maxlen=2
-rule1 <- apriori(baskets, parameter=list(supp=0.009, conf=0.5, maxlen=4))
+  #4 itemsets
+#Rule 1: supp:0.003, conf:0.35, maxlen=2
+rule1 <- apriori(baskets, parameter=list(supp=0.003, conf=0.35, maxlen=2))
 inspect(rule1)
 
-#Rule 2: supp:0.01, conf:0.30, maxlen=4
-rule2 <- apriori(baskets, parameter=list(supp=0.009, conf=0.51, maxlen=5))
+  #7 itemsets
+#Rule 2: supp:0.003, conf:0.38, maxlen=3
+rule2 <- apriori(baskets, parameter=list(supp=0.003, conf=0.38, maxlen=3))
 inspect(rule2)
+
+  #14 itemsets
+#Rule3: supp = 0.002, conf = 0.40
+rule3 <- apriori(baskets,parameter = list(supp = 0.002, conf = 0.40))
+rule3
+
+#14 itemsets
+#Rule3: supp = 0.002, conf = 0.40
+rule4 <- apriori(baskets,parameter = list(supp = 0.0009, conf = 0.30, maxlen=2))
+rule4
+
+  #350 itemsets
+#rulesall (almost all of them - 350 rules)
+rulesall <- rule2 <- apriori(baskets,  parameter=list(supp=0.001, conf=0.30, maxlen=3))
+rulesall
+
+
+
+  #subrules
+subrules <- subset(rulesall, lift>4)
+subrules
 
 #Sort rules by conf
 rules_conf <- sort (rule0, by="confidence", decreasing=TRUE)
@@ -69,8 +96,13 @@ inspect(bread)
 rules_lift_bread <- sort(bread, by="lift", decreasing=TRUE)
 inspect(rules_lift_bread)
 
+#packagedoc: https://cran.rstudio.com/web/packages/arulesViz/arulesViz.pdf
+#Viz - multiple rules
 
-rules <- apriori(baskets,parameter = list(supp = 0.0018, conf = 0.40))
-rules
-plot(rules[1:10], method=graph, control=list(type=items()))
+#Plots (interactive and non-int)
+plot(rulesall[1:300], verbose=TRUE,  engine="htmlwidget")
+plot(subrules[1:100], verbose=TRUE, engine="htmlwidget")
+plot(rulesall, control = list(col=sequential_hcl(100)))
 
+#Grouped matrix
+plot(rule3, method="grouped matrix")
