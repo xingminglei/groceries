@@ -2,12 +2,13 @@
 ##Load packages and set directory
 setwd("~/Documents/GitHub/groceries")
 library(arules)
-??read.transactions
 library(readr)
 library(arulesViz)
 library(rJava)
 library(iplots)
 library(colorspace)
+install.packages("tkplot")
+library(Rgraphviz)
 
 #Loading data and treating data
 
@@ -21,12 +22,11 @@ baskets<- read.transactions(file="~/Documents/GitHub/groceries/orders.csv",
                             quote = "",
                             cols= c(1,2))
 
-
 inspect(head(baskets))
 summary(baskets)
 
 itemFrequency(baskets)
-test1<-eclat(baskets, parameter = list(supp=0.05, maxlen=15))
+test1<-eclat(baskets, parameter = list(supp=0.00, maxlen=3))
 inspect(test1)
 
 #Produtos mais comprados
@@ -68,7 +68,6 @@ rulesall <- rule2 <- apriori(baskets,  parameter=list(supp=0.001, conf=0.30, max
 rulesall
 
 
-
   #subrules
 subrules <- subset(rulesall, lift>4)
 subrules
@@ -99,10 +98,19 @@ inspect(rules_lift_bread)
 #packagedoc: https://cran.rstudio.com/web/packages/arulesViz/arulesViz.pdf
 #Viz - multiple rules
 
-#Plots (interactive and non-int)
+#Plots (interactive and non)
 plot(rulesall[1:300], verbose=TRUE,  engine="htmlwidget")
 plot(subrules[1:100], verbose=TRUE, engine="htmlwidget")
 plot(rulesall, control = list(col=sequential_hcl(100)))
 
 #Grouped matrix
 plot(rule3, method="grouped matrix")
+
+#Graphs
+plot(rule2, method="graph", engine = "interactive")
+plot(rule2, method="graph", engine="htmlwidget",
+     igraphLayout = "layout_in_circle")
+
+#Parallel coordinates plot
+plot(rule2, method="paracoord", reorder=TRUE)
+plot(rule2, method="graph")
